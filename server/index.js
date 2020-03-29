@@ -1,7 +1,10 @@
 require('dotenv').config();
 
-const app = require('express')();
+const express = require('express');
+const app = express();
 const routes = require('./routes');
+// use json on body
+app.use(express.json());
 
 // Create all the routes
 routes.createRoutes(app);

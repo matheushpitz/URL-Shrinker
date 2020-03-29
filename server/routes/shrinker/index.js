@@ -1,11 +1,12 @@
 const service = require('../../services/shrinker');
 
 const createShrinkerRoutes = (app) => {    
-    app.get('/shrinker/add', async (req, res) => {
-        try {
+    app.post('/shrinker/add', async (req, res) => {
+        try {            
+            let result = await service.addUrl(req.body.url); 
             res.json({
-                success: await service.addUrl(req.query.url),
-                message: 'The link has been shrunk.'
+                success: result,
+                message: result ? 'The link has been shrunk.' : 'Invalid link.'
             });
         } catch(err) {
             console.log(err);

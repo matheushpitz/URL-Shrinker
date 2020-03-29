@@ -3,6 +3,7 @@ const repository = require('../../repositories/urls');
 
 const isUrlValid = async (url) => {
     try {        
+        //make a http request
         await https.get(url);        
         return true;
     } catch(err) {
@@ -11,22 +12,32 @@ const isUrlValid = async (url) => {
 }
 
 const addUrl = async (url) => {
-    let isValid = await isUrlValid(url);
+    try {
+        // check if the link is valid
+        let isValid = await isUrlValid(url);        
 
-    if(isValid) {
-        let response = await repository.add(url);
-        if(response.nInserted > 0)
-            return true;
-        else
-            return false;
+        if(isValid) {
+            // add on database
+            let response = await repository.add(url);            
+            if(response.insertedCount > 0)
+                return true;
+            else
+                return false;
+        }
+
+        return false;
+    } catch(err) {
+        throw err;
     }
 }
 
 const getUrl = async (id) => {
     try {
+        //get the data.
         let result = await repository.get(id);
         if(result) {
             result.count++;
+            // update with count++
             await repository.update(result);
             return result;
         }
@@ -39,6 +50,7 @@ const getUrl = async (id) => {
 
 const getTop5 = async () => {
     try {
+        // get top 5 links
         return await repository.getTop5();
     } catch(err) {
         throw err;

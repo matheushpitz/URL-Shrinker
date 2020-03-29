@@ -22,10 +22,10 @@ const add = async (url) => {
 
 const get = async (id) => {
     try {
-        let cursor = await database.dbInstance.collection('urls').find({ _id: id });
-        
+        let cursor = database.dbInstance.collection('urls').find({ _id: id });
+        // get next        
         if(cursor.hasNext())
-            return cursor.next();
+            return await cursor.next();
 
         return undefined;
     } catch(err) {
@@ -35,14 +35,7 @@ const get = async (id) => {
 
 const getTop5 = async () => {
     try {
-        let cursor = await database.dbInstance.collection('urls').find().sort({ count: -1 }).limit(5);
-        let result = [];
-
-        while(cursor.hasNext()) {            
-            result.push(cursor.next());
-        }
-
-        return result;
+        return await database.dbInstance.collection('urls').find().sort({ count: -1 }).limit(5).toArray();        
     } catch(err) {
         throw err;
     }
