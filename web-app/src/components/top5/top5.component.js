@@ -1,15 +1,19 @@
-import React from 'react';
 import './top5.css';
-import Loading from '../loading/loading.component';
+
+import React from 'react';
 import { Table, Row, Col } from 'react-bootstrap';
+
+import Loading from '../loading/loading.component';
+import { createRedirectedUrl } from '../../utils/url';
 
 const renderRows = (data) => {
     return data.map((d) => {
+        let redirectedUrl = createRedirectedUrl(d._id);
         return (
             <tr key={d._id}>
                 <td className="top5-table-link">
-                    <a className="top5-table-link" target="_blank" rel="noopener noreferrer" href={process.env.REACT_APP_WEB_APP_HOST + d._id}>
-                        {process.env.REACT_APP_WEB_APP_HOST + d._id}
+                    <a className="top5-table-link" target="_blank" rel="noopener noreferrer" href={redirectedUrl}>
+                        {redirectedUrl}
                     </a>
                 </td>
                 <td>{d.count}</td>

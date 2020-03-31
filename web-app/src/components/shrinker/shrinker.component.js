@@ -21,7 +21,7 @@ const Shrinker = (props) => {
 
             <Row>
                 <Col xl="12">
-                    {data.shrinkedUrl === null ? ( null ) : (
+                    {data.shrinkedUrl === null || data.shrinkedUrl.length < 1 ? ( null ) : (
                         <span className="shrinker-message">
                             <a href={data.shrinkedUrl} target="_blank" rel="noopener noreferrer">
                                 {data.shrinkedUrl}

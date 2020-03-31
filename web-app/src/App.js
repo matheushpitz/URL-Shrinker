@@ -1,10 +1,13 @@
-import React from 'react';
 import './App.css';
+
+import React from 'react';
+import { Row, Col, Image } from 'react-bootstrap';
+
 import Redirect from './components/redirect/redirect.component';
 import Shrinker from './components/shrinker/shrinker.component';
 import Top5 from './components/top5/top5.component';
 import { getUrl, addUrl, getTop5 } from './services/url/url.service';
-import { Row, Col, Image } from 'react-bootstrap';
+import { createRedirectedUrl } from './utils/url';
 
 class App extends React.Component {
   constructor(props) {    
@@ -15,19 +18,18 @@ class App extends React.Component {
       shrinker: {
         link: '',
         message: '',
-        error: false
+        error: false,
+        shrinkedUrl: null
       },
-      top5: {
-        data: null
-      }      
+      top5: null      
     };    
-
+    // Check if it needs to redirect
     if(window.location.pathname.length > 1)
       this.state.redirect = {
         ...this.state.redirect,
         text: 'Loading...'
       };
-
+    // bind functions.
     this.onChangeHandler = this.onChangeHandler.bind(this);
     this.onClickHandler = this.onClickHandler.bind(this);
   }
@@ -42,7 +44,7 @@ class App extends React.Component {
         this.setState({
           redirect: {
             ...this.state.redirect,
-            text: 'Redirecting...'
+            text: 'Wait, you will be Redirected...'
           }
         });
         // Create delay
@@ -80,17 +82,11 @@ class App extends React.Component {
   async loadTop5() {
     try {
       this.setState({
-        top5: {
-          ...this.state.top5,
-          data: (await getTop5()).data
-        }
+        top5: (await getTop5()).data
       });
     } catch(err) {
       this.setState({
-        top5: {
-          ...this.state.top5,
-          data: []
-        }
+        top5: []
       });
     }
   }
@@ -134,7 +130,7 @@ class App extends React.Component {
             link: '',
             message: result.message,
             error: !result.success,
-            shrinkedUrl: result.id ? process.env.REACT_APP_WEB_APP_HOST + result.id : null
+            shrinkedUrl: result.id ? createRedirectedUrl(result.id) : null
           }
         });
 
@@ -183,7 +179,7 @@ class App extends React.Component {
         <div className="body">
           <Row>
             <Col xl="5" lg="6" md="8" sm="10" xs="11" className="align-component">
-              <Top5 className="top5" data={this.state.top5.data} />
+              <Top5 className="top5" data={this.state.top5} />
             </Col>
           </Row>
         </div>

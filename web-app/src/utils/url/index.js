@@ -1,0 +1,1 @@
+export const createRedirectedUrl = (id) => process.env.REACT_APP_WEB_APP_HOST + id;
