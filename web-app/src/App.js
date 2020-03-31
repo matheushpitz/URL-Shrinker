@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import Redirect from './components/redirect.component';
 import Shrinker from './components/shrinker.component';
-import { getUrl } from './services/url.service';
+import { getUrl, addUrl } from './services/url.service';
 import { Row, Col, Image } from 'react-bootstrap';
 
 class App extends React.Component {
@@ -11,11 +11,12 @@ class App extends React.Component {
 
     this.state = {
       redirect: window.location.pathname.length > 1,
-      link: ''
+      link: '',
+      spanMessage: '',
     };    
 
     this.onChangeHandler = this.onChangeHandler.bind(this);
-    this.onClickHandler = this.onChangeHandler.bind(this);
+    this.onClickHandler = this.onClickHandler.bind(this);
   }
 
   async componentDidMount() {
@@ -46,8 +47,13 @@ class App extends React.Component {
     });
   }
 
-  onClickHandler() {
-    alert('clique');
+  async onClickHandler() {
+    let result = await addUrl(this.state.link);
+    if(!result.success) {
+      this.setState({
+        spanMessage: result.message
+      })
+    }
   }
 
   render() {
@@ -75,7 +81,7 @@ class App extends React.Component {
 
               <Row>
                 <Col xl="6" className="align-component">
-                  <Shrinker value={this.state.link} onChange={this.onChangeHandler} onClick={this.onClickHandler} />
+                  <Shrinker value={this.state.link} spanMessage={this.state.spanMessage} onChange={this.onChangeHandler} onClick={this.onClickHandler} />
                 </Col>
               </Row>
         </div>                              

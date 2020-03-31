@@ -3,6 +3,7 @@ const service = require('../../services/shrinker');
 const createShrinkerRoutes = (app) => {    
     app.post('/shrinker/add', async (req, res) => {
         try {            
+            console.log(req.body);
             let result = await service.addUrl(req.body.url); 
             res.json({
                 success: result,
