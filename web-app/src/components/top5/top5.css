@@ -1,0 +1,28 @@
+div.top5-main {
+    margin-top: 40px;
+    min-height: 300px;
+}
+
+h2.top5-title {
+    color: #605c5c;
+    font-family: SFPro;
+    font-size: 32px;
+}
+
+p.top5-text {
+    color: #605c5c;
+    font-family: SFPro;
+}
+
+table.top5-table {
+    margin-top: 30px;
+}
+
+td.top5-table-link {
+    text-align: left;
+}
+
+a.top5-table-link {
+    color: #605c5c;
+    font-family: SFPro;
+}

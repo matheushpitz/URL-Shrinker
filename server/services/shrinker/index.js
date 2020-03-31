@@ -15,17 +15,13 @@ const addUrl = async (url) => {
     try {
         // check if the link is valid
         let isValid = await isUrlValid(url);        
-
+        
         if(isValid) {
             // add on database
-            let response = await repository.add(url);            
-            if(response.insertedCount > 0)
-                return true;
-            else
-                return false;
+            return await repository.add(url);                        
         }
 
-        return false;
+        return undefined;
     } catch(err) {
         throw err;
     }

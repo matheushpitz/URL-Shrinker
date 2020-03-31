@@ -1,0 +1,40 @@
+input.inline-form {
+    display: inline-block;
+    width: 80%;
+}
+
+button.inline-form {
+    width: 20%;
+    margin-bottom: 5px;
+}
+
+div.shrinker-form {
+    margin-top: 30px;
+}
+
+button.shrinker-submit {
+    background-color: #f6435d;
+    border-color: #f6435d;
+}
+
+button.shrinker-submit:hover {
+    background-color: #e62743;
+    border-color: #f6435d;
+}
+
+button.shrinker-submit:focus {
+    background-color: #e62743;
+    border-color: #f6435d;
+}
+
+span.shrinker-message {
+    color: #f9f2f2;
+    font-family: SFPro;
+    font-size: 18px;
+}
+
+span.shrinker-message-error {
+    color: #f6435d;
+    font-family: SFPro;
+    font-size: 18px;
+}

@@ -13,14 +13,14 @@
 
 div.header {  
   width: 100%;
-  min-height: 800px;
+  min-height: 500px;
   background-image: url('/images/background.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }
 
 div.header-text {
-  margin-top: 100px;
+  margin-top: 150px;
 }
 
 img.logo {
@@ -29,12 +29,37 @@ img.logo {
   left: 0px;
 }
 
+img.icon {
+  width: 20px;
+}
+
 h1 {
   color: #f9f2f2;
   font-family: SFPro;
+  font-size: 46px;
 }
 
 p {
   color: #f9f2f2;
   font-family: SFPro;
+  font-size: 18px;
+}
+
+div.footer {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.left-anchor {
+  float: left;
+}
+
+.right-anchor {
+  float:right;
+}
+
+span.footer-text {
+  color: #605c5c;
+  font-family: SFPro;
+  font-size: 16px;
 }

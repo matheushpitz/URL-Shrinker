@@ -1,8 +1,9 @@
 import React from 'react';
 import './App.css';
-import Redirect from './components/redirect.component';
-import Shrinker from './components/shrinker.component';
-import { getUrl, addUrl } from './services/url.service';
+import Redirect from './components/redirect/redirect.component';
+import Shrinker from './components/shrinker/shrinker.component';
+import Top5 from './components/top5/top5.component';
+import { getUrl, addUrl, getTop5 } from './services/url/url.service';
 import { Row, Col, Image } from 'react-bootstrap';
 
 class App extends React.Component {
@@ -10,49 +11,143 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      redirect: window.location.pathname.length > 1,
-      link: '',
-      spanMessage: '',
+      redirect: null,
+      shrinker: {
+        link: '',
+        message: '',
+        error: false
+      },
+      top5: {
+        data: null
+      }      
     };    
+
+    if(window.location.pathname.length > 1)
+      this.state.redirect = {
+        ...this.state.redirect,
+        text: 'Loading...'
+      };
 
     this.onChangeHandler = this.onChangeHandler.bind(this);
     this.onClickHandler = this.onClickHandler.bind(this);
   }
 
-  async componentDidMount() {
+  async redirectTo(id) {
+    try {
+      // Get result from server
+      let result = await getUrl(id);
+      // Check if the data is valid
+      if(result.data) {
+        // redirect
+        this.setState({
+          redirect: {
+            ...this.state.redirect,
+            text: 'Redirecting...'
+          }
+        });
+        // Create delay
+        setTimeout(() => {
+          window.location = result.data.url;
+        }, 3000);        
+      } else {
+        // redirect to main app.
+        this.setState({
+          redirect: {
+            ...this.state.redirect,
+            text: 'Invalid URL, you will be redirected.'
+          }
+        });
+        // Create delay
+        setTimeout(() => {
+          window.location.pathname = '/';
+        }, 3000);        
+      }
+    } catch(err) {
+      // redirect to main app.
+      this.setState({
+        redirect: {
+          ...this.state.redirect,
+          text: 'Invalid URL, you will be redirected.'
+        }
+      });
+      // Create delay
+      setTimeout(() => {
+        window.location.pathname = '/';
+      }, 3000);   
+    }
+  }
+
+  async loadTop5() {
+    try {
+      this.setState({
+        top5: {
+          ...this.state.top5,
+          data: (await getTop5()).data
+        }
+      });
+    } catch(err) {
+      this.setState({
+        top5: {
+          ...this.state.top5,
+          data: []
+        }
+      });
+    }
+  }
+
+  componentDidMount() {
+    
     if(this.state.redirect) {
+      // remove overflow
+      document.getElementsByTagName('body')[0].style['overflow'] = 'hidden';
       // Get path
       let paths = window.location.pathname.split('/');
       // Check for a wrong path
       if(paths.length !== 2) {
         window.location.pathname = '/';
         return;
-      }      
-      // Get result from server
-      let result = await getUrl(paths[1]);
-      // Check if the data is valid
-      if(result.data) {
-        // redirect
-        window.location = result.data.url;
-      } else {
-        // redirect to main app.
-        window.location.pathname = '/';
-      }
+      }     
+      // redirect
+      this.redirectTo(paths[1]);
+      
+    } else {
+      this.loadTop5();
     }
   }
 
   onChangeHandler(ev) {
     this.setState({
-      link: ev.target.value
+      shrinker: {
+        ...this.state.shrinker,
+        link: ev.target.value
+      }
     });
   }
 
   async onClickHandler() {
-    let result = await addUrl(this.state.link);
-    if(!result.success) {
+    try {
+      let result = await addUrl(this.state.shrinker.link);
+      if(result) {
+        this.setState({
+          shrinker: {
+            ...this.state.shrinker,
+            link: '',
+            message: result.message,
+            error: !result.success,
+            shrinkedUrl: result.id ? process.env.REACT_APP_WEB_APP_HOST + result.id : null
+          }
+        });
+
+        this.loadTop5();
+      }
+    } catch(err) {
       this.setState({
-        spanMessage: result.message
-      })
+        shrinker: {
+          ...this.state.shrinker,
+          message: 'An error occured. Please, try it later.',
+          error: true
+        }
+      });
     }
   }
 
@@ -60,7 +155,7 @@ class App extends React.Component {
     if(this.state.redirect) {
       return (
         <div className="App">
-          <Redirect/>
+          <Redirect text={ this.state.redirect.text } />
         </div>
       );
     }
@@ -72,7 +167,7 @@ class App extends React.Component {
               <Row>
                 <Col xl="12">
                   <Image src="images/interlink-logo-white.png" className="logo" />    
-                  <div className="header-text container">         
+                  <div className="header-text">         
                     <h1>Shrink your link!</h1>
                     <p>A long URL is always a problem. It's hard to remember and share.</p> 
                   </div>
@@ -80,10 +175,25 @@ class App extends React.Component {
               </Row>
 
               <Row>
-                <Col xl="6" className="align-component">
-                  <Shrinker value={this.state.link} spanMessage={this.state.spanMessage} onChange={this.onChangeHandler} onClick={this.onClickHandler} />
+                <Col  xl="5" lg="6" md="8" sm="10" xs="11" className="align-component">
+                  <Shrinker data={this.state.shrinker} onChange={this.onChangeHandler} onClick={this.onClickHandler} />
                 </Col>
               </Row>
+        </div>
+        <div className="body">
+          <Row>
+            <Col xl="5" lg="6" md="8" sm="10" xs="11" className="align-component">
+              <Top5 className="top5" data={this.state.top5.data} />
+            </Col>
+          </Row>
+        </div>
+        <div className="footer">
+          <Row>
+            <Col>
+              <span className="footer-text left-anchor">Made with <Image className="icon" src="images/heart-emoji.png" /> by Interlink</span>
+              < Image className="icon right-anchor" src="images/twitter-logo.png" />
+            </Col>
+          </Row>
         </div>                              
       </div>
     );

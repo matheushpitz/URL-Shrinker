@@ -1,7 +1,7 @@
 const database = require('../database');
 
 const createId = () => {
-    return Buffer.from((new Date()).getTime() + count()).toString('base64');
+    return Buffer.from((new Date()).getMilliseconds() + Math.round(Math.random() * 100) + count()).toString('base64');
 }
 
 const createUrl = (url) => {
@@ -14,7 +14,13 @@ const createUrl = (url) => {
 
 const add = async (url) => {
     try {
-        return await database.dbInstance.collection('urls').insertOne(createUrl(url));
+        let newUrl = createUrl(url);
+        let result = await database.dbInstance.collection('urls').insertOne(newUrl);
+
+        if(result.insertedCount > 0)
+            return newUrl;
+
+        return undefined;
     } catch(err) {
         throw err;
     }
